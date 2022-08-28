@@ -80,6 +80,7 @@ function scheduleHtmlParser(html){
                 var weeks = getWeeks(allTime[0],flag);
                 console.log("weeks"+weeks);
                 var day = getDay(sumTime[i]);
+                //更新符号修饰
                 console.log("day"+day);
                 var sections = getSection(sumTime[i]);
                 console.log("section"+sections);
@@ -107,6 +108,8 @@ function scheduleHtmlParser(html){
 
 
 function getDay(strDay){
+    const dayEnd = strDay.search("\\[");
+    strDay = strDay.slice(dayEnd-1,dayEnd);
         if (strDay.search("一") != -1 ){
             return 1;
         }
