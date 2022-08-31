@@ -11,7 +11,7 @@ async function scheduleTimer({
     var selections=[];
     var sumSections = [
         { section: 1, startTime: "08:00", endTime: "08:45" },
-        { section: 2, startTime: "08:88", endTime: "9:40" },
+        { section: 2, startTime: "08:55", endTime: "9:40" },
         { section: 3, startTime: "10:10", endTime: "10:55" },
         { section: 4, startTime: "11:05", endTime: "11:50" },
         { section: 5, startTime: "15:00", endTime: "15:45" },
