@@ -37,7 +37,7 @@ async function scheduleTimer({
     var myDate = new Date();//获取系统当前时间
     var nowMonth=myDate.getMonth();
     var selections="";
-    if(nowMonth>=5&&nowMonth<=9){
+    if(nowMonth>=4&&nowMonth<=8){
         selections=sumSections;
     }
     else {

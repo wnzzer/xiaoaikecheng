@@ -109,6 +109,7 @@ function scheduleHtmlParser(html){
 
 function getDay(strDay){
     const dayEnd = strDay.search("\\[");
+    console.log("截取的周几字符串"+dayEnd)
     strDay = strDay.slice(dayEnd-1,dayEnd);
         if (strDay.search("一") != -1 ){
             return 1;
@@ -136,7 +137,7 @@ function getDay(strDay){
 
 
 function getWeeks(weekStr,flag){
-    var week = [];
+    let week = [];
     weekStr = weekStr.replace('周','');
 
     if (flag == 1) {
@@ -150,14 +151,19 @@ function getWeeks(weekStr,flag){
 
 }
 function weekStr2IntList(week) {
+    console.log("执行了添加函数")
+
     // 将全角逗号替换为半角逗号
-    var a = week.split('-');
-    var index = a[0];
-    var end = a[1];
-    let weeks =[];
-    for(i = index;i<=end;i++){
+    let a = week.split('-');
+    let index = parseInt(a[0]);
+    let end = parseInt(a[1]);
+    var weeks =[];
+    console.log("循环前")
+    for (var i = index; i <= end; i++) {
         weeks.push(i);
+
     }
+    console.log("循环后")
     return weeks;
 
 }
