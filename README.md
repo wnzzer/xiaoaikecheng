@@ -1,37 +1,35 @@
-# （小米）（js）青果教务系统小爱课程表适配
+# 小米小爱（js）青果教务系统小爱课程表适配
 
 #### 介绍
-课程表的适配主要是对dom层的提取归类处理，本人技术水平较低，这里简单分享下自己的代码，课程表的适配主要是通过操作scheduleHtmlProvider，scheduleHtmlParser，scheduleTimer函数完成的，他们的作用分别是获取dom，处理dom，设置课表节次时间
+1. 课程表的适配主要是对dom层的提取归类处理
+2. 课程表的适配主要是通过操作`scheduleHtmlProvider，scheduleHtmlParser，scheduleTimer函数完成的`
 
 #### 软件架构
-软件架构说明
+![javascript](https://img.shields.io/badge/javascript-yellow.svg)
+
 
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+| 功能                      | 作用        | 
+|-------------------------|-----------|
+| scheduleHtmlProvider.js | 获取 dom 信息 |
+| scheduleHtmlParser.js   | 解析处理 dom  | 
+| scheduleTimer.js        | 设置节次数量，时间 |
+#### 使用/适配流程
 
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+1.  下载官方插件
+> 可以通过课程表适配的官方网址下载插件，安装到浏览器，进行相关项目的适配 <a href="https://open-schedule-prod.ai.xiaomi.com/docs/#/help/">https://open-schedule-prod.ai.xiaomi.com/docs/#/help/</a>
+2. 创建学校项目
+3. ![Alt Text](./img/index.png)
+> 可以在浏览器控制台创建浏览器项目
+3. 编写测试
+![Alt Text](./img/dev.png)
+> 后面就可以根据提示对三个方法进行编写测试了
 
 
-#### 特技
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+#### 说明
+
+1.  代码来自于河南科技学院教务系统适配，不确保能适配其他教务系统
+2.  代码没有经过充分测试，仅仅自用，不确保没有bug
