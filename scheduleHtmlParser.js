@@ -1,179 +1,74 @@
-function scheduleHtmlParser(html){
+function scheduleHtmlParser(html) {
     let course = [];
-    const $ = cheerio.load(html, {decodeEntities: false}); // 避免中文乱码
-    $(' tbody>tr ').each(function () {
-        //大杂烩
-        var name = $(this).children().eq(1).text();
-        //这是课程名字
-        console.log("name"+name)
-        var teacher = $(this).children().eq(5).text();
-        //这是教师名字
-        var allData = $(this).children().eq(8).text();
-        //数据位置大杂烩
-        var sumTime = allData.split(",");
-        var sumLength = sumTime.length;
-        //时间个数
-        console.log("输出时间个数:"+sumLength);
+    const $ = cheerio.load(html, { decodeEntities: false });
+    
+    // 遍历每个时间段的行（忽略表头）
+    $('tr:not(.H)').each(function (trIdx, trElem) {
+        const $tr = $(trElem);
+        let timeSegment = "";
 
+        // 获取时间段信息（上午、下午等）
+        $tr.find('td[rowspan]').each(function () {
+            timeSegment = $(this).text().trim();
+        });
 
-        if (sumLength == 1) {
-            console.log("sumtime"+sumTime[0]);
+        // 遍历课程单元格（周一到周日）
+        $tr.find('td:not([rowspan])').each(function (tdIdx, tdElem) {
+            const $td = $(tdElem);
+            const day = tdIdx + 1; // 周一为1，依此类推
 
+            // 处理每个课程块
+            $td.find('div[style*="padding-bottom:5px"]').each(function () {
+                const $div = $(this);
+                const content = $div.html().split(/<br\s*\/?>/i);
+                
+                // 解析课程基本信息
+                const name = $div.find('font').text().trim();
+                const teachers = content[1].replace(/&nbsp;/g, ' ').trim();
+                const timeInfo = content[2].trim();
+                const position = content[3].trim();
 
+                // 解析时间信息
+                const [weekInfo, sectionInfo] = timeInfo.match(/(.*?)\[(\d+)-(\d+)\]/).slice(1);
+                const sections = Array.from({ length: sectionInfo[2]-sectionInfo[1]+1 }, (_, i) => parseInt(sectionInfo[1]) + i);
 
-            //在这里提前取出来单双周
-            var flag = 0;
+                // 处理多周次范围
+                weekInfo.split(',').forEach(weekPart => {
+                    let [flag, cleanWeek] = parseWeekType(weekPart);
+                    cleanWeek.split(',').forEach(weekRange => {
+                        const [start, end] = weekRange.includes('-') ? 
+                            weekRange.split('-').map(Number) : 
+                            [Number(weekRange), Number(weekRange)];
+                        
+                        const weeks = Array.from({ length: end - start + 1 }, (_, i) => start + i)
+                            .filter(w => checkWeekType(w, flag));
 
-            if (sumTime[0].search("单")!=-1){
-                flag = 1;
-                sumTime[0]=sumTime[0].replace('(单)', '');
-            }
-            else if (sumTime[0].search("双")!=-1) {
-                flag =2;
-                sumTime[0]=sumTime[0].replace('(双)', '');
-            }
-            console.log("flag的值"+flag);
-            var allTime = sumTime[0].split(" ");
-            console.log("alltime"+allTime);
-            var weeks = getWeeks(allTime[0],flag);
-            console.log("weeks"+weeks);
-            var day = getDay(sumTime[0]);
-            console.log("day"+day);
-            var sections = getSection(sumTime[0]);
-            console.log("section"+sections);
-            var position = allTime[allTime.length-1];
-            console.log("position"+position);
+                        // 构建课程对象
+                        course.push({
+                            name,
+                            position,
+                            teacher: teachers,
+                            weeks,
+                            day,
+                            sections,
+                        });
+                    });
+                });
+            });
+        });
+    });
 
-
-
-            var obj = {
-                name: name,
-                position: position,
-                teacher: teacher,
-                weeks: weeks,
-                day: day,
-                sections: sections,
-            }
-            course.push(obj);
-
-
-        }
-        else if (sumLength > 1) {
-            var i = 0;
-            while (i <= sumLength-1) {
-                console.log("第i段时间"+i);
-
-                //在这里提前取出来单双周
-                var flag = 0;
-
-                if (sumTime[i].search("单")!=-1){
-                    flag = 1;
-                    sumTime[i]=sumTime[i].replace('(单)', '');
-                }
-                else if (sumTime[i].search("双")!=-1) {
-                    flag =2;
-                    sumTime[i]=sumTime[i].replace('(双)', '');
-                }
-                console.log("flag的值"+flag);
-                var allTime = sumTime[i].split(" ");
-                console.log("alltime"+allTime);
-                var weeks = getWeeks(allTime[0],flag);
-                console.log("weeks"+weeks);
-                var day = getDay(sumTime[i]);
-                //更新符号修饰
-                console.log("day"+day);
-                var sections = getSection(sumTime[i]);
-                console.log("section"+sections);
-                var position = allTime[allTime.length-1];
-                console.log("position"+position);
-
-                var obj = {
-                    name: name,
-                    position: position,
-                    teacher: teacher,
-                    weeks: weeks,
-                    day: day,
-                    sections: sections,
-                }
-                course.push(obj);
-                i++;
-
-
-            }
-        }
-    })
-    console.log(course)
     return course;
-}
 
-
-function getDay(strDay){
-    const dayEnd = strDay.search("\\[");
-    console.log("截取的周几字符串"+dayEnd)
-    strDay = strDay.slice(dayEnd-1,dayEnd);
-        if (strDay.search("一") != -1 ){
-            return 1;
-        }
-        else if (strDay.search("二") != -1){
-            return 2;
-        }
-        else if (strDay.search("三") != -1){
-            return 3;
-        }
-        else if (strDay.search("四") != -1){
-            return 4;
-        }
-        else if (strDay.search("五") != -1){
-            return 5;
-        }
-        else if (strDay.search("六") != -1){
-            return 6;
-        }
-        else if (strDay.search("日") != -1){
-            return 7;
-        }
-
+    // 辅助函数：解析单双周标记
+    function parseWeekType(weekStr) {
+        const weekTypeMap = { '单': 1, '双': 2 };
+        const [_, flag, clean] = weekStr.match(/(单|双)?\s*([\d,-]+)/) || [null, null, weekStr];
+        return [flag ? weekTypeMap[flag] : 0, clean];
     }
 
-
-function getWeeks(weekStr,flag){
-    let week = [];
-    weekStr = weekStr.replace('周','');
-
-    if (flag == 1) {
-        week = weekStr2IntList(weekStr).filter(v => v % 2 != 0);
-    } else if (flag == 2) {
-        week = weekStr2IntList(weekStr).filter(v => v % 2 == 0);
-    } else {
-        week = weekStr2IntList(weekStr);
+    // 辅助函数：过滤周次
+    function checkWeekType(week, flag) {
+        return flag === 0 || (flag === 1 && week % 2 === 1) || (flag === 2 && week % 2 === 0);
     }
-    return week;
-
-}
-function weekStr2IntList(week) {
-    console.log("执行了添加函数")
-
-    // 将全角逗号替换为半角逗号
-    let a = week.split('-');
-    let index = parseInt(a[0]);
-    let end = parseInt(a[1]);
-    var weeks =[];
-    console.log("循环前")
-    for (var i = index; i <= end; i++) {
-        weeks.push(i);
-
-    }
-    console.log("循环后")
-    return weeks;
-
-}
-
-
-function getSection(strSection){
-    var sections = [];
-    var indexSection = strSection.indexOf("[");
-    var section = strSection.slice(indexSection+1,indexSection+2);
-    console.log("section"+section)
-    sections.push(parseInt(section),parseInt(section)+1);
-    return sections;
 }
