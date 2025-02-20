@@ -26,7 +26,7 @@ function getParam(){
     let year = date.getFullYear();//获取完整的年份(4位)
     const month = date.getMonth() + 1; //获取当前月份(0-11,0代表1月)
     let xq = 0;
-    if(month < 7){
+    if(month < 7 && month >= 2){
         xq = 1;
         year = year - 1;
     }
